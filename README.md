@@ -14,4 +14,4 @@ LoRa communication project
 <img width="1024" height="507" alt="lo-ra" src="https://github.com/user-attachments/assets/2ace8b85-6a6b-4dd7-9994-480567d969ed" />
 
 <h2>Schematic of esp32</h2>
-![esp32](https://github.com/user-attachments/assets/559b3fae-7b01-4f44-9b02-b260ec4b925e)
+<img width="1024" height="507" alt="lo-ra" src="https://github.com/user-attachments/assets/fbe9c8c3-ccb7-466d-995e-f5618e29ce25" />
