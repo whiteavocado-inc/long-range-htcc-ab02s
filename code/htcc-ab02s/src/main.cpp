@@ -2,6 +2,7 @@
 #include <Wire.h>
 #include "GPS_Air530Z.h"
 #include "HT_SSD1306Wire.h"
+#include "LoRaWan_APP.h"
 
 // Display setup: I2C address, frequency, SDA, SCL, display geometry, reset pin
 SSD1306Wire display(0x3c, 500000, SDA, SCL, GEOMETRY_128_64, GPIO10);
@@ -120,3 +121,22 @@ void loop() {
   }
   Serial.println("-------------");
 }
+
+
+// uint8_t data[] = "Hello, LoRa!";
+
+// void setup() {
+//   Serial.begin(115200);
+//   delay(5000);
+
+//   Radio.Sleep();
+//   Radio.Init();
+//   Radio.SetTxConfig(MODEM_LORA, 14, 0, LORA_BW_125, LORA_SF12, LORA_CR_4_5, 8, false, true, 0, 0, false, 3000);
+
+//   Serial.println("Sending LoRa packet...");
+//   Radio.Send(data, sizeof(data));
+// }
+
+// void loop() {
+//   // Nothing to do
+// }
