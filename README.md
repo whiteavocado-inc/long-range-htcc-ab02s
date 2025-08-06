@@ -1,5 +1,5 @@
 # long-range-htcc-ab02s
-LoRa communication project
+LoRa communication project (1-10km range)
 
 
 <h2>Buy list</h2>
