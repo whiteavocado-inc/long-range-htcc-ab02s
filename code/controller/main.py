@@ -134,7 +134,6 @@ if (choise == 0):
         while True:
             if ser.in_waiting:
                 line = ser.readline().decode('utf-8', errors='replace').strip()
-                print(line)
                 dec = decrypt(line)
                 if not line or dec == None: continue
                 print(dec)
@@ -159,8 +158,6 @@ while True:
         if (pl > 255):
             print(f"Payload too big (255 chars allowed, now { pl }. (You can also try to lower the AES-key count)")
             continue
-
-        print(payload)
 
         ser.write((payload).encode())
     
