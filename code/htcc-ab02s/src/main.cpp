@@ -31,9 +31,7 @@ void rxDone(uint8_t *payload, uint16_t size, int16_t rssi, int8_t snr) {
 		buff += c;
 	}
 
-	Serial.println("Received buff: " + buff);
-	Serial.println("\nrssi: " + String(rssi));
-	Serial.println("snr: " + String(snr));
+	Serial.println(buff);
 
 	Radio.Rx(0);
 }
@@ -97,8 +95,10 @@ void setup() {
 }
 
 void loop() {
-	const char *msg = "Hello P2P";
-	Radio.Send((uint8_t *)msg, strlen(msg));
-	Serial.println("Sent packet");
-	delay(5000);
+	if (Serial.available()) {
+		String msgStr = Serial.readStringUntil('\n');
+		const char *msg = msgStr.c_str();
+		Radio.Send((uint8_t*)msg, strlen(msg));
+	}
+	delay(100);
 }
