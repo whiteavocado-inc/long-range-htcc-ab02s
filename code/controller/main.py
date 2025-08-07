@@ -118,11 +118,7 @@ if (choise == 0):
         while True:
             if ser.in_waiting:
                 line = ser.readline().decode('utf-8', errors='replace').strip()
-                
-                sys.stdout.write('\r' + ' ' * 80 + '\r')
-                print(line)
-                sys.stdout.write("> ")
-                sys.stdout.flush()
+                print(decrypt(line))
             
             else: time.sleep(0.1)
         
