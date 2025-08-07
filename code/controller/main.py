@@ -138,7 +138,7 @@ while True:
         msg = input(f"you ({ nickName }) > ")
         msg = f"{ nickName }: { msg }"
         msg = encrypt(msg)
-        ser.write((msg).encode())
+        ser.write((msg + "\n").encode())
     
     except Exception:
         print("Input error")
