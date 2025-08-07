@@ -1,4 +1,4 @@
-#pip install pyserial pycryptodome base64 python-dotenv
+#pip install pyserial pycryptodome python-dotenv
 
 import time, os, threading, sys, base64
 import serial.tools.list_ports
