@@ -12,6 +12,7 @@ def env(index): return os.getenv(index)
 baud = int(env("BAUD"))
 portName = ""
 nickName = env("NICKNAME")
+aesActive = False if env("AES_ACTIVE") == "false" else True
             
 
 def cls():
@@ -19,6 +20,8 @@ def cls():
     else: os.system("clear")
     
 def encrypt(txt: str) -> str:
+    if (not aesActive): return txt
+
     data = txt.encode("utf-8")
     c = int(env("AES_KEY_COUNT"))
     for i in range(c):
@@ -31,6 +34,8 @@ def encrypt(txt: str) -> str:
     return data.decode("utf-8")
 
 def decrypt(txt: str) -> str:
+    if (not aesActive): return txt
+
     data = txt.encode("utf-8")
     c = int(env("AES_KEY_COUNT"))
     for i in reversed(range(c)):
@@ -135,10 +140,14 @@ while True:
         msg = f"{ nickName }: { msg }"
         msg = encrypt(msg)
         payload = msg + "\n"
+        pl = len(payload)
 
-        times = (len(payload) + 254) // 255
-        for i in range(times): ser.write((payload[i * 255 : (i + 1) * 255]).encode())
+        if (pl > 255):
+            print(f"Payload too big (255 chars allowed, now { pl }. (You can also try to lower the AES-key count)")
+            continue
+
+        ser.write((payload).encode())
     
-    except Exception:
-        print("Input error")
+    except Exception as e:
+        print(f"Input error {e}")
 #
