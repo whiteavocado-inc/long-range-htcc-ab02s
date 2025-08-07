@@ -58,8 +58,7 @@ def decrypt(txt: str) -> str:
 
         return data.decode("utf-8")
     
-    except Exception as e:
-        return f"[decryption error] {e}"
+    except Exception: return None
     
 
 while True:
@@ -136,8 +135,9 @@ if (choise == 0):
             if ser.in_waiting:
                 line = ser.readline().decode('utf-8', errors='replace').strip()
                 print(line)
-                if not line: continue
-                print(decrypt(line))
+                dec = decrypt(line)
+                if not line or dec == None: continue
+                print(dec)
             
             else: time.sleep(0.1)
         
@@ -153,7 +153,7 @@ while True:
         msg = input(f"you ({ nickName }) > ")
         msg = f"{ nickName }: { msg }"
         msg = encrypt(msg)
-        payload = msg + "\n"
+        payload = msg + "|"
         pl = len(payload)
 
         if (pl > 255):
