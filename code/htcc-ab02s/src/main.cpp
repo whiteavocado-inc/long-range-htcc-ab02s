@@ -2,141 +2,120 @@
 #include <Wire.h>
 #include "GPS_Air530Z.h"
 #include "HT_SSD1306Wire.h"
-#include "LoRaWan_APP.h"
+#include <LoRa_APP.h>
+#include <AESLib.h>
 
-// Display setup: I2C address, frequency, SDA, SCL, display geometry, reset pin
 SSD1306Wire display(0x3c, 500000, SDA, SCL, GEOMETRY_128_64, GPIO10);
-
-// GPS module object
 Air530ZClass GPS;
+RadioEvents_t radioEvents;
+size_t frequency = 868000000;
+AESLib aesLib;
 
-void VextON(void) {
-  pinMode(Vext, OUTPUT);
-  digitalWrite(Vext, LOW); // Vext ON
+byte aesKey[] = {0x00, 0x01, 0x02, 0x03, 0x04, 0x05, 0x06, 0x07,
+                  0x08, 0x09, 0x0A, 0x0B, 0x0C, 0x0D, 0x0E, 0x0F};
+
+void vextOn() {//GPS and display on
+	pinMode(Vext, OUTPUT);
+	digitalWrite(Vext, LOW);
 }
 
-void VextOFF(void) {
-  pinMode(Vext, OUTPUT);
-  digitalWrite(Vext, HIGH); // Vext OFF
+void vextOff() {//GPS and display off
+	pinMode(Vext, OUTPUT);
+	digitalWrite(Vext, HIGH);
 }
 
-void setup() {
-  VextON();
-  delay(10);
+void txDone() {
+	Serial.println("Tx done");
+	Radio.Rx(0);
+}
 
-  display.init();
-  display.clear();
-  display.setTextAlignment(TEXT_ALIGN_CENTER);
-  display.setFont(ArialMT_Plain_16);
-  display.drawString(64, 32 - 8, "GPS initializing...");
-  display.display();
+void rxDone(uint8_t *payload, uint16_t size, int16_t rssi, int8_t snr) {
+	String buff = "";
+	for (int i = 0; i < size; i++) {
+		char c = (char)payload[i];
+		buff += c;
+	}
 
-  Serial.begin(921600);
-  GPS.begin(115200);
+	Serial.println("Received buff: " + buff);
+	Serial.println("\nrssi: ");
+	Serial.print(rssi);
+	Serial.println("snr: ");
+	Serial.print(snr);
+
+	Radio.Rx(0);
+}
+
+void rxTimeout() {
+	Serial.println("rx timeout");
+	Radio.Rx(0);
+}
+
+void rxError() {
+	Serial.println("rx error");
+	Radio.Rx(0);
+}
+
+String encrypt(const char *msg) {
+	byte plain[32];
+	byte encrypted[32];
+	int len = strlen(msg);
+
+	memcpy(plain, msg, len);
+
+	int encLen = aesLib.encrypt(plain, encrypted, len, aesKey);
+}
+
+void setup() {	
+	vextOn();
+	delay(10);
+
+	display.init();
+	display.clear();
+	display.setTextAlignment(TEXT_ALIGN_CENTER);
+	display.setFont(ArialMT_Plain_16);
+	display.drawString(64, 32 - 8, "Testing on Serial");
+	display.display();
+
+	Serial.begin(921600);
+	GPS.begin(115200);
+
+	radioEvents.TxDone = txDone;
+	radioEvents.RxDone = rxDone;
+	radioEvents.RxTimeout = rxTimeout;
+	radioEvents.RxError = rxError;
+
+	Radio.Init(&radioEvents);
+	Radio.SetChannel(frequency);
+
+	Radio.SetRxConfig(
+		MODEM_LORA,         // RadioModems_t modem
+		0,                  // uint32_t bandwidth (0=125 kHz)
+		7,                  // uint32_t datarate (SF7)
+		1,                  // uint8_t coderate (4/5)
+		0,                  // uint32_t bandwidthAfc (usually 0 for LoRa)
+		8,                  // uint16_t preambleLen
+		0,                  // uint16_t symbTimeout (0 = infinite)
+		false,              // bool fixLen
+		0,                  // uint8_t payloadLen (0 = variable length)
+		true,               // bool crcOn
+		false,              // bool freqHopOn
+		0,                  // uint8_t hopPeriod
+		false,              // bool iqInverted
+		true                // bool rxContinuous
+	);
+
+	String okMsg = "LoRa ready!";
+
+	Serial.println(okMsg);
+
+	display.clear();
+	display.drawString(64, 32, okMsg);
+	display.display();
 }
 
 void loop() {
-  // Read GPS data for 1 second
-  uint32_t starttime = millis();
-  while ((millis() - starttime) < 1000) {
-    while (GPS.available() > 0) {
-      GPS.encode(GPS.read());
-    }
-  }
-
-  display.clear();
-  display.setFont(ArialMT_Plain_10);
-  display.setTextAlignment(TEXT_ALIGN_LEFT);
-
-  char buffer[32];
-
-  // Check if date and time are valid
-  if (GPS.date.isValid() && GPS.time.isValid()) {
-    sprintf(buffer, "%02d-%02d-%04d", GPS.date.day(), GPS.date.month(), GPS.date.year());
-    display.drawString(0, 0, buffer);
-
-    sprintf(buffer, "%02d:%02d:%02d", GPS.time.hour(), GPS.time.minute(), GPS.time.second());
-    display.drawString(60, 0, buffer);
-  } else {
-    display.drawString(0, 0, "Date/Time Invalid");
-  }
-
-  // Fix status
-  if (GPS.location.isValid()) {
-    display.drawString(120, 0, "✔");  // Valid fix
-  } else {
-    display.drawString(120, 0, "✖");  // No fix
-  }
-
-  // Altitude
-  if (GPS.altitude.isValid()) {
-    dtostrf(GPS.altitude.meters(), 6, 2, buffer);
-    display.drawString(0, 16, String("Alt: ") + buffer + " m");
-  } else {
-    display.drawString(0, 16, "Alt: --");
-  }
-
-  // HDOP
-  if (GPS.hdop.isValid()) {
-    dtostrf(GPS.hdop.hdop(), 4, 2, buffer);
-    display.drawString(0, 32, String("HDOP: ") + buffer);
-  } else {
-    display.drawString(0, 32, "HDOP: --");
-  }
-
-  // Latitude
-  if (GPS.location.isValid()) {
-    dtostrf(GPS.location.lat(), 10, 6, buffer);
-    display.drawString(60, 16, String("Lat: ") + buffer);
-
-    dtostrf(GPS.location.lng(), 10, 6, buffer);
-    display.drawString(60, 32, String("Lon: ") + buffer);
-  } else {
-    display.drawString(60, 16, "Lat: --");
-    display.drawString(60, 32, "Lon: --");
-  }
-
-  // Speed
-  if (GPS.speed.isValid()) {
-    dtostrf(GPS.speed.kmph(), 6, 2, buffer);
-    display.drawString(0, 48, String("Speed: ") + buffer + " km/h");
-  } else {
-    display.drawString(0, 48, "Speed: --");
-  }
-
-  display.display();
-
-  // Optional: Print debug info to serial
-  Serial.println("-------------");
-  if (GPS.location.isValid()) {
-    Serial.printf("Lat: %.6f, Lon: %.6f\n", GPS.location.lat(), GPS.location.lng());
-  } else {
-    Serial.println("Location invalid");
-  }
-  if (GPS.time.isValid()) {
-    Serial.printf("Time: %02d:%02d:%02d\n", GPS.time.hour(), GPS.time.minute(), GPS.time.second());
-  }
-  if (GPS.date.isValid()) {
-    Serial.printf("Date: %02d-%02d-%04d\n", GPS.date.day(), GPS.date.month(), GPS.date.year());
-  }
-  Serial.println("-------------");
+	const char *msg = "Hello P2P";
+	Radio.Send((uint8_t *)msg, strlen(msg));
+	Serial.println("Sent packet");
+	delay(5000);
 }
-
-
-// uint8_t data[] = "Hello, LoRa!";
-
-// void setup() {
-//   Serial.begin(115200);
-//   delay(5000);
-
-//   Radio.Sleep();
-//   Radio.Init();
-//   Radio.SetTxConfig(MODEM_LORA, 14, 0, LORA_BW_125, LORA_SF12, LORA_CR_4_5, 8, false, true, 0, 0, false, 3000);
-
-//   Serial.println("Sending LoRa packet...");
-//   Radio.Send(data, sizeof(data));
-// }
-
-// void loop() {
-//   // Nothing to do
-// }
