@@ -96,7 +96,7 @@ void setup() {
 
 void loop() {
 	if (Serial.available()) {
-		String msgStr = Serial.readStringUntil('\n');
+		String msgStr = Serial.readStringUntil('|');
 		const char *msg = msgStr.c_str();
 		Radio.Send((uint8_t*)msg, strlen(msg));
 	}
