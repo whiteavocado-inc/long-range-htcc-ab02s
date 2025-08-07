@@ -54,11 +54,11 @@ void setup() {
 	display.clear();
 	display.setTextAlignment(TEXT_ALIGN_CENTER);
 	display.setFont(ArialMT_Plain_16);
-	display.drawString(64, 32 - 8, "Testing on Serial");
+	display.drawString(64, 32 - 8, "[Loading...]");
 	display.display();
 
 	Serial.begin(921600);
-	GPS.begin(115200);
+	//GPS.begin(115200);
 
 	radioEvents.TxDone = txDone;
 	radioEvents.RxDone = rxDone;
@@ -85,12 +85,8 @@ void setup() {
 		true                // bool rxContinuous
 	);
 
-	String okMsg = "LoRa ready!";
-
-	Serial.println(okMsg);
-
 	display.clear();
-	display.drawString(64, 32, okMsg);
+	display.drawString(64, 32 - 8, "[Ready]");
 	display.display();
 }
 
