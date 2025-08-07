@@ -20,18 +20,17 @@ def cls():
     else: os.system("clear")
     
 def encrypt(txt: str) -> str:
-    if (not aesActive): return txt
-
+    if not aesActive: return txt
+    
     data = txt.encode("utf-8")
     c = int(env("AES_KEY_COUNT"))
     for i in range(c):
-        key = env(f"AES_KEY_{ i + 1 }").encode("utf-8")
+        key = env(f"AES_KEY_{i + 1}").encode("utf-8")
         iv = os.urandom(16)
         cipher = AES.new(key, AES.MODE_CBC, iv)
         data = iv + cipher.encrypt(pad(data, AES.block_size))
-        data = base64.b64encode(data)
-        
-    return data.decode("utf-8")
+    
+    return base64.b64encode(data).decode("utf-8")
 
 def decrypt(txt: str) -> str:
     if (not aesActive): return txt
@@ -123,6 +122,7 @@ if (choise == 0):
         while True:
             if ser.in_waiting:
                 line = ser.readline().decode('utf-8', errors='replace').strip()
+                if not line: continue
                 print(decrypt(line))
             
             else: time.sleep(0.1)
