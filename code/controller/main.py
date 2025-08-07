@@ -21,33 +21,46 @@ def cls():
     else: os.system("clear")
     
 def encrypt(txt: str) -> str:
-    if not aesActive: return txt
-    
+    if not aesActive:
+        return txt
+
     data = txt.encode("utf-8")
     c = int(env("AES_KEY_COUNT"))
+
     for i in range(c):
         key = env(f"AES_KEY_{i + 1}").encode("utf-8")
         iv = os.urandom(16)
         cipher = AES.new(key, AES.MODE_CBC, iv)
         data = iv + cipher.encrypt(pad(data, AES.block_size))
-    
+
+    # Base64 encode only once at the end
     return base64.b64encode(data).decode("utf-8")
 
 def decrypt(txt: str) -> str:
-    if (not aesActive): return txt
+    if not aesActive:
+        return txt
 
-    data = txt.encode("utf-8")
-    c = int(env("AES_KEY_COUNT"))
-    for i in reversed(range(c)):
-        key = env(f"AES_KEY_{ i + 1 }").encode("utf-8")
-        data = base64.b64decode(data)
-        iv = data[:16]
-        encrypted = data[16:]
-        cipher = AES.new(key, AES.MODE_CBC, iv)
-        data = cipher.decrypt(encrypted)
-        if i == 0: data = unpad(data, AES.block_size)
-        
-    return data.decode("utf-8")
+    try:
+        # Decode only once
+        data = base64.b64decode(txt)
+        c = int(env("AES_KEY_COUNT"))
+
+        for i in reversed(range(c)):
+            key = env(f"AES_KEY_{i + 1}").encode("utf-8")
+
+            iv = data[:16]
+            encrypted = data[16:]
+
+            cipher = AES.new(key, AES.MODE_CBC, iv)
+            data = cipher.decrypt(encrypted)
+
+            if i == 0:
+                data = unpad(data, AES.block_size)
+
+        return data.decode("utf-8")
+    
+    except Exception as e:
+        return f"[decryption error] {e}"
     
 
 while True:
@@ -123,6 +136,7 @@ if (choise == 0):
         while True:
             if ser.in_waiting:
                 line = ser.readline().decode('utf-8', errors='replace').strip()
+                print(line)
                 if not line: continue
                 print(decrypt(line))
             
@@ -146,6 +160,8 @@ while True:
         if (pl > 255):
             print(f"Payload too big (255 chars allowed, now { pl }. (You can also try to lower the AES-key count)")
             continue
+
+        print(payload)
 
         ser.write((payload).encode())
     
