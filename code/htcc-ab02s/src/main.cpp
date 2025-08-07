@@ -3,16 +3,11 @@
 #include "GPS_Air530Z.h"
 #include "HT_SSD1306Wire.h"
 #include <LoRa_APP.h>
-#include <AESLib.h>
 
 SSD1306Wire display(0x3c, 500000, SDA, SCL, GEOMETRY_128_64, GPIO10);
 Air530ZClass GPS;
 RadioEvents_t radioEvents;
 size_t frequency = 868000000;
-AESLib aesLib;
-
-byte aesKey[] = {0x00, 0x01, 0x02, 0x03, 0x04, 0x05, 0x06, 0x07,
-                  0x08, 0x09, 0x0A, 0x0B, 0x0C, 0x0D, 0x0E, 0x0F};
 
 void vextOn() {//GPS and display on
 	pinMode(Vext, OUTPUT);
@@ -37,10 +32,8 @@ void rxDone(uint8_t *payload, uint16_t size, int16_t rssi, int8_t snr) {
 	}
 
 	Serial.println("Received buff: " + buff);
-	Serial.println("\nrssi: ");
-	Serial.print(rssi);
-	Serial.println("snr: ");
-	Serial.print(snr);
+	Serial.println("\nrssi: " + String(rssi));
+	Serial.println("snr: " + String(snr));
 
 	Radio.Rx(0);
 }
@@ -53,16 +46,6 @@ void rxTimeout() {
 void rxError() {
 	Serial.println("rx error");
 	Radio.Rx(0);
-}
-
-String encrypt(const char *msg) {
-	byte plain[32];
-	byte encrypted[32];
-	int len = strlen(msg);
-
-	memcpy(plain, msg, len);
-
-	int encLen = aesLib.encrypt(plain, encrypted, len, aesKey);
 }
 
 void setup() {	

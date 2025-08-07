@@ -1,0 +1,1 @@
+In this case, the controller is the tool used to connect the LoRa setup to your pc or laptop.
