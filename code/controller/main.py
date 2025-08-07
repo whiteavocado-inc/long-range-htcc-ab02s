@@ -138,8 +138,6 @@ while True:
 
         times = (len(payload) + 254) // 255
         for i in range(times): ser.write((payload[i * 255 : (i + 1) * 255]).encode())
-
-        ser.write((payload).encode())
     
     except Exception:
         print("Input error")
