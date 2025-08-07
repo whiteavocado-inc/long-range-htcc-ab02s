@@ -54,7 +54,6 @@ while True:
     i = -1
 
     for p in list(serial.tools.list_ports.comports()):
-        if "CP2102" not in p.description: continue
         i += 1
         devices.append([i, p])
         print(f"[{i}] {p}")
