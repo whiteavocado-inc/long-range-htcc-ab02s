@@ -24,16 +24,15 @@ def encrypt(txt: str) -> str:
     if not aesActive:
         return txt
 
-    data = txt.encode("utf-8")
+    data = pad(txt.encode("utf-8"), AES.block_size)
     c = int(env("AES_KEY_COUNT"))
 
     for i in range(c):
         key = env(f"AES_KEY_{i + 1}").encode("utf-8")
         iv = os.urandom(16)
         cipher = AES.new(key, AES.MODE_CBC, iv)
-        data = iv + cipher.encrypt(pad(data, AES.block_size))
+        data = iv + cipher.encrypt(data)
 
-    # Base64 encode only once at the end
     return base64.b64encode(data).decode("utf-8")
 
 def decrypt(txt: str) -> str:
