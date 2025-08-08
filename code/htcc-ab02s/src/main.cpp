@@ -68,21 +68,37 @@ void setup() {
 	Radio.Init(&radioEvents);
 	Radio.SetChannel(frequency);
 
-	Radio.SetRxConfig(
+	Radio.SetRxConfig(//Receive
 		MODEM_LORA,         // RadioModems_t modem
 		0,                  // uint32_t bandwidth (0=125 kHz)
-		7,                  // uint32_t datarate (SF7)
-		1,                  // uint8_t coderate (4/5)
+		12,                  // uint32_t datarate (SF7-12)
+		4,                  // uint8_t coderate (4/5)
 		0,                  // uint32_t bandwidthAfc (usually 0 for LoRa)
-		8,                  // uint16_t preambleLen
+		16,                  // uint16_t preambleLen
 		0,                  // uint16_t symbTimeout (0 = infinite)
 		false,              // bool fixLen
 		0,                  // uint8_t payloadLen (0 = variable length)
 		true,               // bool crcOn
 		false,              // bool freqHopOn
 		0,                  // uint8_t hopPeriod
-		false,              // bool iqInverted
+		true,              // bool iqInverted
 		true                // bool rxContinuous
+	);
+
+	Radio.SetTxConfig(//Send
+		MODEM_LORA,   // LoRa mode
+		14,           // TX power in dBm (max legal in EU)
+		0,            // Fdev (not used in LoRa)
+		0,            // Bandwidth (0 = 125 kHz)
+		12,            // Spreading Factor (change to sf7-12 if needed)
+		4,            // Coding rate 4/5
+		16,            // Preamble length
+		false,        // FixLen (false = variable length)
+		true,         // CRC On
+		false,        // Freq hopping
+		0,            // Hop period
+		true,        // IQ inverted
+		10          // Timeout in ms
 	);
 
 	display.clear();
