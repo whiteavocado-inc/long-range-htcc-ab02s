@@ -7,7 +7,7 @@
 SSD1306Wire display(0x3c, 500000, SDA, SCL, GEOMETRY_128_64, GPIO10);
 Air530ZClass GPS;
 RadioEvents_t radioEvents;
-size_t frequency = 868000000;
+size_t frequency = 869500000;// default = "868000000" | power = "869500000"
 
 void vextOn() {//GPS and display on
 	pinMode(Vext, OUTPUT);
@@ -87,7 +87,7 @@ void setup() {
 
 	Radio.SetTxConfig(//Send
 		MODEM_LORA,   // LoRa mode
-		14,           // TX power in dBm (max legal in EU)
+		20,           // TX power in dBm (max legal in EU)
 		0,            // Fdev (not used in LoRa)
 		0,            // Bandwidth (0 = 125 kHz)
 		12,            // Spreading Factor (change to sf7-12 if needed)
