@@ -11,6 +11,8 @@ LoRa communication project (1-10km range)
 <h2>Schematic of LoRa module + integrated microcontroller</h2>
 <img width="1024" height="507" alt="lo-ra" src="https://github.com/user-attachments/assets/2ace8b85-6a6b-4dd7-9994-480567d969ed" />
 
+![LoRa](https://github.com/user-attachments/assets/c8ab49bf-d5ae-4b45-be33-9e7e114938e6)
+
 <h2>Controller</h2>
 
 Use the [Controller](https://github.com/whiteavocado-inc/long-range-htcc-ab02s/tree/main/code/controller) to connect with the LoRa module by USB-cable
