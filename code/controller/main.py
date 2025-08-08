@@ -60,6 +60,23 @@ def decrypt(txt: str) -> str:
     
     except Exception: return None
     
+def receiver(ser):
+    try:
+        while True:
+            if ser.in_waiting:
+                line = ser.readline().decode('utf-8', errors='replace').strip()
+                dec = decrypt(line)
+                if not line or dec == None: continue
+                f = open("serial.log", "a")
+                f.write(dec + "\n")
+                f.close()
+            
+            else: time.sleep(0.1)
+        
+    except Exception as e:
+        print(f"Error: Device disconnected\n\n{e}")
+        exit(1)
+    
 
 while True:
     cls()
@@ -101,23 +118,6 @@ while True:
     break
 
 
-
-while True:
-    cls()
-    e = "Invalid option"
-    choise = -1
-    try: choise = int(input("Which mode do you want to use?\n\n[0: receive | 1: send]\n> "))
-        
-    except Exception:
-        print(e)
-        continue
-    
-    if (choise != 0 and choise != 1):
-        print(e)
-        continue
-    
-    break
-
 try:
     cls()
     ser = serial.Serial(portName, baud, timeout=1)
@@ -125,28 +125,14 @@ try:
     
 except:
     print(f"Could not connect to { portName }")
-    exit(1)
-
-#Receive
-if (choise == 0):
-    print("[receive]\n")
-    try:
-        while True:
-            if ser.in_waiting:
-                line = ser.readline().decode('utf-8', errors='replace').strip()
-                dec = decrypt(line)
-                if not line or dec == None: continue
-                print(dec)
-            
-            else: time.sleep(0.1)
-        
-    except Exception as e:
-        print(f"Error: Device disconnected\n\n{e}")
-        exit(1)
+    exit(2)
+    
+#Start receive thread (Write to serial.log)
+t = threading.Thread(target=receiver, args=(ser,), daemon=True)
+t.start()
 #
 
 #Send
-print("[send]\n")
 while True:
     try:
         msg = input(f"you ({ nickName }) > ")
@@ -162,5 +148,7 @@ while True:
         ser.write((payload).encode())
     
     except Exception as e:
+        t.join()
         print(f"Input error {e}")
+        exit(3)
 #

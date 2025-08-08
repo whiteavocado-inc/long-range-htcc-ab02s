@@ -88,6 +88,8 @@ void setup() {
 	display.clear();
 	display.drawString(64, 32 - 8, "[Ready]");
 	display.display();
+
+	Radio.Rx(0);//Start in receive mode
 }
 
 void loop() {
