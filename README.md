@@ -15,3 +15,5 @@ LoRa communication project (1-10km range)
 
 <h2>Schematic of esp32</h2>
 <img width="1280" height="720" alt="lo-ra" src="https://github.com/user-attachments/assets/fbe9c8c3-ccb7-466d-995e-f5618e29ce25" />
+
+[e](https://github.com/whiteavocado-inc/long-range-htcc-ab02s/blob/main/3D-prints/default/Case-D.stl)
