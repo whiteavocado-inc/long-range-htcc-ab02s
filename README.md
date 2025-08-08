@@ -5,15 +5,8 @@ LoRa communication project (1-10km range)
 <h2>Buy list</h2>
 
 * Integrated LoRa microcontroller, includes GPS ([heltech](https://heltec.org/project/htcc-ab02s/) | [tinytronics](https://www.tinytronics.nl/en/development-boards/microcontroller-boards/met-gps/heltec-cubecell-lora-development-board-gnss-868mhz-met-0.96-inch-oled-display)) ~€25 x 2 (for receiving and sending)
-* esp32, including wifi ([bol.com](https://www.bol.com/nl/nl/s/?searchtext=esp32) | [amazon](https://www.amazon.nl/Diymore-Development-NodeMcu-2-4GHz-Bluetooth/dp/B0D9LF7BJ7/ref=sr_1_31?adgrpid=1334807585265444&hvadid=83425857553681&hvbmt=bp&hvdev=c&hvlocphy=214976&hvnetw=s&hvqmt=p&hvtargid=kwd-83425784549360%3Aloc-129&hydadcr=3751_2402922&mcid=50dbca8f1802390499211ae7687decaf&sr=8-31)) ~€7 - €12 x 2 (For allowing a small webserver to send data to the LoRa microcontroller) 
 
-<code>Est price: ~€70 for two devices</code>
-
+<code>Est price: ~€50 for two devices</code>
 
 <h2>Schematic of LoRa module + integrated microcontroller</h2>
 <img width="1024" height="507" alt="lo-ra" src="https://github.com/user-attachments/assets/2ace8b85-6a6b-4dd7-9994-480567d969ed" />
-
-<h2>Schematic of esp32</h2>
-<img width="1280" height="720" alt="lo-ra" src="https://github.com/user-attachments/assets/fbe9c8c3-ccb7-466d-995e-f5618e29ce25" />
-
-[e](https://github.com/whiteavocado-inc/long-range-htcc-ab02s/blob/main/3D-prints/default/Case-D.stl)
