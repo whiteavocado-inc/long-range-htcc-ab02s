@@ -13,7 +13,7 @@ LoRa communication project (1-10km range)
 
 <h2>Controller</h2>
 
-Use the [Controller](https://github.com/whiteavocado-inc/long-range-htcc-ab02s/tree/main/code/controller) to connect with the LoRa module by USB-cable
+Use the [controller](https://github.com/whiteavocado-inc/long-range-htcc-ab02s/tree/main/code/controller) to connect with the LoRa module by USB-cable
 
 <p>To setup the Controller, you can execute the following commands in the folder with the main.py and .env file</p>
 
