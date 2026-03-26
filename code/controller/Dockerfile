@@ -2,7 +2,7 @@
 #
 # Some usefull commands:
 # sudo docker build -t lora-controller .                            #Build the docker container
-# sudo docker run -it --privileged lora-controller /start.sh        #Start the docker container
+# sudo docker run --rm -it --privileged lora-controller /start.sh        #Start the docker container, auto-remove on exit
 #
 #
 #Or, to remove the container:
